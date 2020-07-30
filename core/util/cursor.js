@@ -1,6 +1,6 @@
 /*
  * noVNC: HTML5 VNC client
- * Copyright (C) 2018 The noVNC Authors
+ * Copyright (C) 2019 The noVNC Authors
  * Licensed under MPL 2.0 or any later version (see LICENSE.txt)
  */
 
@@ -20,7 +20,6 @@ export default class Cursor {
             this._canvas.style.pointerEvents = 'none';
             // Can't use "display" because of Firefox bug #1445997
             this._canvas.style.visibility = 'hidden';
-            document.body.appendChild(this._canvas);
         }
 
         this._position = { x: 0, y: 0 };
@@ -45,6 +44,8 @@ export default class Cursor {
         this._target = target;
 
         if (useFallback) {
+            document.body.appendChild(this._canvas);
+
             // FIXME: These don't fire properly except for mouse
             ///       movement in IE. We want to also capture element
             //        movement, size changes, visibility, etc.
@@ -64,6 +65,10 @@ export default class Cursor {
     }
 
     detach() {
+        if (!this._target) {
+            return;
+        }
+
         if (useFallback) {
             const options = { capture: true, passive: true };
             this._target.removeEventListener('mouseover', this._eventHandlers.mouseover, options);
@@ -74,6 +79,8 @@ export default class Cursor {
             window.removeEventListener('touchstart', this._eventHandlers.touchstart, options);
             this._target.removeEventListener('touchmove', this._eventHandlers.touchmove, options);
             this._target.removeEventListener('touchend', this._eventHandlers.touchend, options);
+
+            document.body.removeChild(this._canvas);
         }
 
         this._target = null;
@@ -132,7 +139,8 @@ export default class Cursor {
     }
 
     _handleMouseLeave(event) {
-        this._hideCursor();
+        // Check if we should show the cursor on the element we are leaving to
+        this._updateVisibility(event.relatedTarget);
     }
 
     _handleMouseMove(event) {
@@ -150,6 +158,25 @@ export default class Cursor {
         // now and adjust visibility based on that.
         let target = document.elementFromPoint(event.clientX, event.clientY);
         this._updateVisibility(target);
+
+        // Captures end with a mouseup but we can't know the event order of
+        // mouseup vs releaseCapture.
+        //
+        // In the cases when releaseCapture comes first, the code above is
+        // enough.
+        //
+        // In the cases when the mouseup comes first, we need wait for the
+        // browser to flush all events and then check again if the cursor
+        // should be visible.
+        if (this._captureIsActive()) {
+            window.setTimeout(() => {
+                // Refresh the target from elementFromPoint since queued events
+                // might have altered the DOM
+                target = document.elementFromPoint(event.clientX,
+                                                   event.clientY);
+                this._updateVisibility(target);
+            }, 0);
+        }
     }
 
     _handleTouchStart(event) {
@@ -189,6 +216,9 @@ export default class Cursor {
     // (i.e. are we over the target, or a child of the target without a
     // different cursor set)
     _shouldShowCursor(target) {
+        if (!target) {
+            return false;
+        }
         // Easy case
         if (target === this._target) {
             return true;
@@ -207,6 +237,11 @@ export default class Cursor {
     }
 
     _updateVisibility(target) {
+        // When the cursor target has capture we want to show the cursor.
+        // So, if a capture is active - look at the captured element instead.
+        if (this._captureIsActive()) {
+            target = document.captureElement;
+        }
         if (this._shouldShowCursor(target)) {
             this._showCursor();
         } else {
@@ -217,5 +252,10 @@ export default class Cursor {
     _updatePosition() {
         this._canvas.style.left = this._position.x + "px";
         this._canvas.style.top = this._position.y + "px";
+    }
+
+    _captureIsActive() {
+        return document.captureElement &&
+            document.documentElement.contains(document.captureElement);
     }
 }
