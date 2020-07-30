@@ -275,6 +275,10 @@ msgstr "中断连接"
 msgid "Connect"
 msgstr "连接"
 
+#: ../vnc.html:294
+msgid "Username:"
+msgstr "用户名："
+
 #: ../vnc.html:299
 msgid "Password:"
 msgstr "密码："

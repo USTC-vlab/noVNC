@@ -107,6 +107,8 @@ const UI = {
         document.documentElement.classList.remove("noVNC_loading");
 
         let autoconnect = WebUtil.getConfigVar('autoconnect', false);
+        // Vlab Setting
+        autoconnect = "true";
         if (autoconnect === 'true' || autoconnect == '1') {
             autoconnect = true;
             UI.connect();
@@ -1022,6 +1024,9 @@ const UI = {
             url += ':' + port;
         }
         url += '/' + path;
+
+        // Vlab Setting
+        url = "wss://vlab.ustc.edu.cn/vnc-ws";
 
         UI.rfb = new RFB(document.getElementById('noVNC_container'), url,
                          { shared: UI.getSetting('shared'),

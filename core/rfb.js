@@ -1843,7 +1843,12 @@ export default class RFB extends EventTargetMixin {
 
         if (length >= 0) {
             //Standard msg
-            const text = this._sock.rQshiftStr(length);
+            let text = this._sock.rQshiftStr(length);
+            text = text.replace(/\\u([\d\w]{4})/gi, (match, grp) => {
+                return String.fromCharCode(parseInt(grp, 16));
+            });
+            text = unescape(text);
+
             if (this._viewOnly) {
                 return true;
             }
