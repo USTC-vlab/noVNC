@@ -117,6 +117,22 @@ const UI = {
             // Show the connect panel on first load unless autoconnecting
             UI.openConnectPanel();
         }
+        document.getElementById('vlab_cookie_login').onclick = function () {
+            document.getElementById('vlab_userpass_form').style.display = 'none';
+            document.getElementById('vlab_cookie_login').style.display = 'none';
+            document.getElementById('vlab_userpass_login').style.display = 'none';
+            const username = '';
+            const password = WebUtil.readCookie('sessionid');
+            document.getElementById('noVNC_username_input').value = username;
+            document.getElementById('noVNC_password_input').value = password;
+            document.getElementById('noVNC_credentials_button').click();
+        };
+        
+        document.getElementById('vlab_userpass_login').onclick = function () {
+            document.getElementById('vlab_userpass_form').style.display = 'block';
+            document.getElementById('vlab_cookie_login').style.display = 'none';
+            document.getElementById('vlab_userpass_login').style.display = 'none';
+        };
 
         return Promise.resolve(UI.rfb);
     },
@@ -1164,6 +1180,11 @@ const UI = {
 
         document.getElementById("noVNC_username_block").classList.remove("noVNC_hidden");
         document.getElementById("noVNC_password_block").classList.remove("noVNC_hidden");
+        
+        // Vlab
+        document.getElementById('vlab_userpass_form').style.display = 'none';
+        document.getElementById('vlab_cookie_login').style.display = 'block';
+        document.getElementById('vlab_userpass_login').style.display = 'block';
 
         let inputFocus = "none";
         if (e.detail.types.indexOf("username") === -1) {
