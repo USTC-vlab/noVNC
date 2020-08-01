@@ -127,7 +127,7 @@ const UI = {
             document.getElementById('noVNC_password_input').value = password;
             document.getElementById('noVNC_credentials_button').click();
         };
-        
+
         document.getElementById('vlab_userpass_login').onclick = function () {
             document.getElementById('vlab_userpass_form').style.display = 'block';
             document.getElementById('vlab_cookie_login').style.display = 'none';
@@ -1180,7 +1180,7 @@ const UI = {
 
         document.getElementById("noVNC_username_block").classList.remove("noVNC_hidden");
         document.getElementById("noVNC_password_block").classList.remove("noVNC_hidden");
-        
+
         // Vlab
         document.getElementById('vlab_userpass_form').style.display = 'none';
         document.getElementById('vlab_cookie_login').style.display = 'block';
