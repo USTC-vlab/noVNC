@@ -117,12 +117,17 @@ const UI = {
             // Show the connect panel on first load unless autoconnecting
             UI.openConnectPanel();
         }
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlParamVMID = urlParams.get('id');
         document.getElementById('vlab_cookie_login').onclick = function () {
             document.getElementById('vlab_userpass_form').style.display = 'none';
             document.getElementById('vlab_cookie_login').style.display = 'none';
             document.getElementById('vlab_userpass_login').style.display = 'none';
-            const username = '';
-            const password = WebUtil.readCookie('sessionid');
+            let username = '';
+            let password = WebUtil.readCookie('sessionid');
+            if (urlParamVMID !== null) {
+                username = ':' + urlParamVMID;
+            }
             document.getElementById('noVNC_username_input').value = username;
             document.getElementById('noVNC_password_input').value = password;
             document.getElementById('noVNC_credentials_button').click();
