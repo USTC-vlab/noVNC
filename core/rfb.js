@@ -792,6 +792,11 @@ export default class RFB extends EventTargetMixin {
                                     { clean: this._rfbCleanDisconnect } }));
                 break;
         }
+
+        const eventName = 'vncws_' + state
+        const e = new Event(eventName);
+        e.oldstate = oldstate;
+        document.dispatchEvent(e);
     }
 
     /* Print errors and disconnect

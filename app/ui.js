@@ -136,7 +136,7 @@ const UI = {
         };
         document.getElementById('vlab_cookie_login').onclick = cookieLogin;
         if (urlParamLogin === 'true') {
-            cookieLogin();
+            document.addEventListener('vncws_credentials', e => cookieLogin(), false);
         }
 
         document.getElementById('vlab_userpass_login').onclick = function () {
@@ -1216,6 +1216,7 @@ const UI = {
 
         Log.Warn("Server asked for credentials");
         UI.showStatus(_("Credentials are required"), "warning");
+        document.dispatchEvent(new Event('vncws_credentials'));
     },
 
     setCredentials(e) {
