@@ -128,16 +128,15 @@ const UI = {
             let username = '';
             let password = WebUtil.readCookie('sessionid');
             if (urlParamVMID !== null) {
-                username = ':' + urlParamVMID;
+                username = ':' + parseInt(urlParamVMID);
             }
             document.getElementById('noVNC_username_input').value = username;
             document.getElementById('noVNC_password_input').value = password;
             document.getElementById('noVNC_credentials_button').click();
         };
+        document.getElementById('vlab_cookie_login').onclick = cookieLogin;
         if (urlParamLogin === 'true') {
             cookieLogin();
-        } else {
-            document.getElementById('vlab_cookie_login').onclick = cookieLogin;
         }
 
         document.getElementById('vlab_userpass_login').onclick = function () {
