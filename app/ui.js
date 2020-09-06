@@ -106,9 +106,13 @@ const UI = {
 
         document.documentElement.classList.remove("noVNC_loading");
 
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlParamVMID = urlParams.get('id');
+        const urlParamLogin = urlParams.get('login');
+
         let autoconnect = WebUtil.getConfigVar('autoconnect', false);
         // Vlab Setting
-        autoconnect = "true";
+        autoconnect = 'true';
         if (autoconnect === 'true' || autoconnect == '1') {
             autoconnect = true;
             UI.connect();
@@ -117,9 +121,7 @@ const UI = {
             // Show the connect panel on first load unless autoconnecting
             UI.openConnectPanel();
         }
-        const urlParams = new URLSearchParams(window.location.search);
-        const urlParamVMID = urlParams.get('id');
-        document.getElementById('vlab_cookie_login').onclick = function () {
+        const cookieLogin = function () {
             document.getElementById('vlab_userpass_form').style.display = 'none';
             document.getElementById('vlab_cookie_login').style.display = 'none';
             document.getElementById('vlab_userpass_login').style.display = 'none';
@@ -132,6 +134,11 @@ const UI = {
             document.getElementById('noVNC_password_input').value = password;
             document.getElementById('noVNC_credentials_button').click();
         };
+        if (urlParamLogin === 'true') {
+            cookieLogin();
+        } else {
+            document.getElementById('vlab_cookie_login').onclick = cookieLogin;
+        }
 
         document.getElementById('vlab_userpass_login').onclick = function () {
             document.getElementById('vlab_userpass_form').style.display = 'block';
